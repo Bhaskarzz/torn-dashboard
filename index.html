@@ -3,154 +3,1461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torn City Advanced Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Torn City - Complete API Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* API Section */
+        .api-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .api-section h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .api-section h1 i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+
+        #apiKey {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #apiKey:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn i {
+            margin-right: 8px;
+        }
+
+        .tab-btn:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .card h3 i {
+            color: #667eea;
+            margin-right: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .stat-value.good {
+            color: #48bb78;
+        }
+
+        .stat-value.bad {
+            color: #f56565;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge.blue {
+            background: #ebf4ff;
+            color: #4299e1;
+        }
+
+        .badge.green {
+            background: #f0fff4;
+            color: #48bb78;
+        }
+
+        .badge.red {
+            background: #fff5f5;
+            color: #f56565;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table tr:hover {
+            background: #f7fafc;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error {
+            background: #fff5f5;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #f56565;
+        }
+
+        /* Success Message */
+        .success {
+            background: #f0fff4;
+            color: #276749;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #48bb78;
+        }
+
+        /* Battle Finder */
+        .battle-finder {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-item label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .filter-item input, .filter-item select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                width: 100%;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Stats Circle */
+        .stat-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            margin: 0 auto 15px;
+        }
+
+        .stat-circle .number {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-circle .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Stock Ticker */
+        .stock-ticker {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px;
+            background: #1a202c;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stock-item {
+            display: inline-block;
+            padding: 0 15px;
+            border-right: 1px solid #4a5568;
+        }
+
+        .stock-item:last-child {
+            border-right: none;
+        }
+
+        .stock-name {
+            font-weight: 600;
+            color: #a0aec0;
+        }
+
+        .stock-price {
+            color: #48bb78;
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- API Key Input Section -->
-        <div class="api-section glass-morphism">
-            <h1><i class="fas fa-skull"></i> Torn City Advanced Dashboard</h1>
+        <!-- API Key Section -->
+        <div class="api-section">
+            <h1><i class="fas fa-skull"></i> Torn City Complete API Dashboard</h1>
             <div class="input-group">
-                <input type="text" id="apiKey" placeholder="Enter your Torn API Key" class="api-input">
-                <button onclick="connectAPI()" class="btn-primary">
-                    <i class="fas fa-link"></i> Connect
+                <input type="text" id="apiKey" placeholder="Enter your Torn API Key" value="">
+                <button onclick="connectAPI()" class="btn btn-primary">
+                    <i class="fas fa-plug"></i> Connect
+                </button>
+                <button onclick="saveAPIKey()" class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Key
                 </button>
             </div>
-            <p class="hint"><i class="fas fa-info-circle"></i> Your API key is stored locally and never shared</p>
+            <div id="apiMessage"></div>
+            <small><i class="fas fa-info-circle"></i> Your API key is stored locally in your browser</small>
         </div>
 
-        <!-- Main Dashboard (Hidden until API is connected) -->
-        <div id="dashboard" class="hidden">
-            <!-- Stats Overview -->
-            <div class="stats-grid">
-                <div class="stat-card glass-morphism">
-                    <i class="fas fa-tasks"></i>
-                    <h3>Missions Left</h3>
-                    <p id="missionsLeft">-</p>
+        <!-- Tabs Navigation -->
+        <div class="tabs" id="tabs" style="display: none;">
+            <button class="tab-btn active" onclick="switchTab('overview')">
+                <i class="fas fa-home"></i> Overview
+            </button>
+            <button class="tab-btn" onclick="switchTab('battle')">
+                <i class="fas fa-fist-raised"></i> Battle Finder
+            </button>
+            <button class="tab-btn" onclick="switchTab('medals')">
+                <i class="fas fa-medal"></i> Medals
+            </button>
+            <button class="tab-btn" onclick="switchTab('merits')">
+                <i class="fas fa-star"></i> Merits
+            </button>
+            <button class="tab-btn" onclick="switchTab('education')">
+                <i class="fas fa-graduation-cap"></i> Education
+            </button>
+            <button class="tab-btn" onclick="switchTab('properties')">
+                <i class="fas fa-home"></i> Properties
+            </button>
+            <button class="tab-btn" onclick="switchTab('company')">
+                <i class="fas fa-building"></i> Company
+            </button>
+            <button class="tab-btn" onclick="switchTab('faction')">
+                <i class="fas fa-users"></i> Faction
+            </button>
+            <button class="tab-btn" onclick="switchTab('stock')">
+                <i class="fas fa-chart-line"></i> Stocks
+            </button>
+            <button class="tab-btn" onclick="switchTab('crimes')">
+                <i class="fas fa-mask"></i> Crimes
+            </button>
+            <button class="tab-btn" onclick="switchTab('gym')">
+                <i class="fas fa-dumbbell"></i> Gym
+            </button>
+            <button class="tab-btn" onclick="switchTab('travel')">
+                <i class="fas fa-plane"></i> Travel
+            </button>
+            <button class="tab-btn" onclick="switchTab('honors')">
+                <i class="fas fa-trophy"></i> Honors
+            </button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;">Loading your Torn data...</p>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <!-- Player Basic Info -->
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-user"></i> Player Info</h3>
+                    <div id="playerBasic"></div>
                 </div>
-                <div class="stat-card glass-morphism">
-                    <i class="fas fa-medal"></i>
-                    <h3>Medals</h3>
-                    <p id="medalsCount">-</p>
+                
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Battle Stats</h3>
+                    <div id="battleStats"></div>
                 </div>
-                <div class="stat-card glass-morphism">
-                    <i class="fas fa-cube"></i>
-                    <h3>Merits</h3>
-                    <p id="meritsCount">-</p>
-                </div>
-                <div class="stat-card glass-morphism">
-                    <i class="fas fa-level-up-alt"></i>
-                    <h3>Level</h3>
-                    <p id="playerLevel">-</p>
+                
+                <div class="card">
+                    <h3><i class="fas fa-clock"></i> Energy & Nerve</h3>
+                    <div id="energyNerve"></div>
                 </div>
             </div>
 
-            <!-- Player Stats -->
-            <div class="stats-detailed glass-morphism">
-                <h2><i class="fas fa-chart-line"></i> Detailed Stats</h2>
-                <div class="stats-bars">
-                    <div class="stat-bar">
-                        <span>Strength</span>
-                        <div class="progress-bar">
-                            <div id="strengthBar" class="progress strength"></div>
-                        </div>
-                        <span id="strengthVal">0</span>
-                    </div>
-                    <div class="stat-bar">
-                        <span>Defense</span>
-                        <div class="progress-bar">
-                            <div id="defenseBar" class="progress defense"></div>
-                        </div>
-                        <span id="defenseVal">0</span>
-                    </div>
-                    <div class="stat-bar">
-                        <span>Speed</span>
-                        <div class="progress-bar">
-                            <div id="speedBar" class="progress speed"></div>
-                        </div>
-                        <span id="speedVal">0</span>
-                    </div>
-                    <div class="stat-bar">
-                        <span>Dexterity</span>
-                        <div class="progress-bar">
-                            <div id="dexterityBar" class="progress dexterity"></div>
-                        </div>
-                        <span id="dexterityVal">0</span>
-                    </div>
-                    <div class="stat-bar">
-                        <span>Total</span>
-                        <div class="progress-bar">
-                            <div id="totalBar" class="progress total"></div>
-                        </div>
-                        <span id="totalVal">0</span>
-                    </div>
+            <!-- Personal Stats -->
+            <div class="grid">
+                <div class="card">
+                    <h3><i class="fas fa-trophy"></i> Personal Stats</h3>
+                    <div id="personalStats"></div>
                 </div>
-            </div>
-
-            <!-- Battle Stats -->
-            <div class="battle-stats glass-morphism">
-                <h2><i class="fas fa-fist-raised"></i> Battle Statistics</h2>
-                <div class="battle-grid">
-                    <div class="battle-item">
-                        <span>Attacks Won</span>
-                        <strong id="attacksWon">-</strong>
-                    </div>
-                    <div class="battle-item">
-                        <span>Attacks Lost</span>
-                        <strong id="attacksLost">-</strong>
-                    </div>
-                    <div class="battle-item">
-                        <span>Defends Won</span>
-                        <strong id="defendsWon">-</strong>
-                    </div>
-                    <div class="battle-item">
-                        <span>Defends Lost</span>
-                        <strong id="defendsLost">-</strong>
-                    </div>
-                    <div class="battle-item">
-                        <span>Best Kill Streak</span>
-                        <strong id="bestKillStreak">-</strong>
-                    </div>
+                
+                <div class="card">
+                    <h3><i class="fas fa-money-bill"></i> Financial Stats</h3>
+                    <div id="financialStats"></div>
                 </div>
-            </div>
-
-            <!-- High Level Low Stats Players -->
-            <div class="targets-section glass-morphism">
-                <h2><i class="fas fa-bullseye"></i> High Level - Low Stats (Potential Bets)</h2>
-                <div class="targets-controls">
-                    <button onclick="refreshTargets()" class="btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Refresh
-                    </button>
-                    <div class="filter-options">
-                        <label>Min Level: <input type="number" id="minLevel" value="15" min="1" max="100"></label>
-                        <label>Max Stats: <input type="number" id="maxStats" value="1000000" min="1000" step="1000"></label>
-                    </div>
-                </div>
-                <div id="targetsList" class="targets-grid">
-                    <!-- Targets will be loaded here -->
-                    <p class="loading">Loading targets...</p>
-                </div>
-            </div>
-
-            <!-- Education & Skills -->
-            <div class="education-section glass-morphism">
-                <h2><i class="fas fa-graduation-cap"></i> Education & Skills</h2>
-                <div id="educationList" class="education-grid">
-                    <!-- Education will be loaded here -->
+                
+                <div class="card">
+                    <h3><i class="fas fa-calendar"></i> Daily Progress</h3>
+                    <div id="dailyProgress"></div>
                 </div>
             </div>
         </div>
+
+        <!-- Battle Finder Tab -->
+        <div id="battle" class="tab-content">
+            <div class="battle-finder">
+                <h2><i class="fas fa-crosshairs"></i> Find Battle Targets</h2>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Min Level</label>
+                        <input type="number" id="minLevel" value="15" min="1" max="100">
+                    </div>
+                    <div class="filter-item">
+                        <label>Max Total Stats</label>
+                        <input type="number" id="maxStats" value="1000000" min="1000" step="1000">
+                    </div>
+                    <div class="filter-item">
+                        <label>Min Respect</label>
+                        <input type="number" id="minRespect" value="1" min="0" step="0.1">
+                    </div>
+                    <div class="filter-item">
+                        <label>Sort By</label>
+                        <select id="sortBy">
+                            <option value="level">Level</option>
+                            <option value="stats">Total Stats</option>
+                            <option value="respect">Respect</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="findTargets()" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Find Targets
+                </button>
+            </div>
+            <div id="targetsList"></div>
+        </div>
+
+        <!-- Medals Tab -->
+        <div id="medals" class="tab-content">
+            <div class="grid" id="medalsList"></div>
+        </div>
+
+        <!-- Merits Tab -->
+        <div id="merits" class="tab-content">
+            <div class="grid" id="meritsList"></div>
+        </div>
+
+        <!-- Education Tab -->
+        <div id="education" class="tab-content">
+            <div class="grid" id="educationList"></div>
+        </div>
+
+        <!-- Properties Tab -->
+        <div id="properties" class="tab-content">
+            <div class="grid" id="propertiesList"></div>
+        </div>
+
+        <!-- Company Tab -->
+        <div id="company" class="tab-content">
+            <div id="companyInfo"></div>
+        </div>
+
+        <!-- Faction Tab -->
+        <div id="faction" class="tab-content">
+            <div id="factionInfo"></div>
+        </div>
+
+        <!-- Stocks Tab -->
+        <div id="stock" class="tab-content">
+            <div id="stocksList"></div>
+        </div>
+
+        <!-- Crimes Tab -->
+        <div id="crimes" class="tab-content">
+            <div id="crimesList"></div>
+        </div>
+
+        <!-- Gym Tab -->
+        <div id="gym" class="tab-content">
+            <div id="gymStats"></div>
+        </div>
+
+        <!-- Travel Tab -->
+        <div id="travel" class="tab-content">
+            <div id="travelInfo"></div>
+        </div>
+
+        <!-- Honors Tab -->
+        <div id="honors" class="tab-content">
+            <div id="honorsList"></div>
+        </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
-        <p>Loading your Torn data...</p>
-    </div>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <script src="js/main.js"></script>
+    <script>
+        let apiKey = '';
+        let playerData = {};
+        let allData = {};
+
+        // Load saved API key
+        window.onload = function() {
+            const savedKey = localStorage.getItem('torn_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                connectAPI();
+            }
+        };
+
+        // Save API key
+        function saveAPIKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (key) {
+                localStorage.setItem('torn_api_key', key);
+                showMessage('API key saved successfully!', 'success');
+            }
+        }
+
+        // Show message
+        function showMessage(msg, type) {
+            const messageDiv = document.getElementById('apiMessage');
+            messageDiv.innerHTML = `<div class="${type}">${msg}</div>`;
+            setTimeout(() => messageDiv.innerHTML = '', 3000);
+        }
+
+        // Show/hide loading
+        function setLoading(show) {
+            document.getElementById('loading').classList.toggle('active', show);
+        }
+
+        // Connect to API
+        async function connectAPI() {
+            apiKey = document.getElementById('apiKey').value.trim();
+            
+            if (!apiKey) {
+                showMessage('Please enter your API key', 'error');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // Fetch ALL available data in one go
+                const selections = [
+                    'basic', 'bars', 'cooldowns', 'education', 'medals', 'merits',
+                    'battlestats', 'inventory', 'profile', 'stocks', 'properties',
+                    'jobpoints', 'travel', 'crimes', 'icons', 'honors', 'notifications',
+                    'personalstats', 'missions', 'gym', 'hof', 'weaponexp',
+                    'chain', 'city', 'territory', 'war', 'competition', 'perks',
+                    'refills', 'log', 'networth', 'enemies', 'messages',
+                    'attacks', 'attacksfull', 'revives', 'revivesfull',
+                    'timestamp', 'discord'
+                ];
+
+                const response = await fetch(`https://api.torn.com/user/?selections=${selections.join(',')}&key=${apiKey}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    showMessage(`API Error: ${data.error.error}`, 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                allData = data;
+                playerData = data;
+
+                // Show tabs and hide API section
+                document.getElementById('tabs').style.display = 'flex';
+                
+                // Update all tabs with data
+                updateOverview();
+                updateMedals();
+                updateMerits();
+                updateEducation();
+                updateProperties();
+                updateCompany();
+                updateFaction();
+                updateStocks();
+                updateCrimes();
+                updateGym();
+                updateTravel();
+                updateHonors();
+
+                showMessage('Data loaded successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Failed to connect to Torn API', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate clicked button
+            event.target.classList.add('active');
+        }
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num?.toString() || '0';
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            if (!seconds) return '0s';
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours}h ${minutes}m ${secs}s`;
+        }
+
+        // Update Overview Tab
+        function updateOverview() {
+            const data = playerData;
+            
+            // Player Basic Info
+            document.getElementById('playerBasic').innerHTML = `
+                <div class="stat-circle">
+                    <span class="number">${data.level || '?'}</span>
+                    <span class="label">Level</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-user"></i> Name:</span>
+                    <span class="stat-value">${data.name || 'Unknown'}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-id-card"></i> ID:</span>
+                    <span class="stat-value">${data.player_id || 'Unknown'}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-calendar"></i> Age:</span>
+                    <span class="stat-value">${formatTime(data.age || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-flag"></i> Status:</span>
+                    <span class="stat-value ${data.status?.state === 'Okay' ? 'good' : 'bad'}">${data.status?.state || 'Unknown'}</span>
+                </div>
+            `;
+
+            // Battle Stats
+            const bs = data.battlestats || {};
+            const total = (bs.strength || 0) + (bs.defense || 0) + (bs.speed || 0) + (bs.dexterity || 0);
+            
+            document.getElementById('battleStats').innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Strength:</span>
+                    <span class="stat-value">${formatNumber(bs.strength)}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bs.strength/total*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label">Defense:</span>
+                    <span class="stat-value">${formatNumber(bs.defense)}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bs.defense/total*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label">Speed:</span>
+                    <span class="stat-value">${formatNumber(bs.speed)}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bs.speed/total*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label">Dexterity:</span>
+                    <span class="stat-value">${formatNumber(bs.dexterity)}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bs.dexterity/total*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label"><strong>Total:</strong></span>
+                    <span class="stat-value"><strong>${formatNumber(total)}</strong></span>
+                </div>
+            `;
+
+            // Energy & Nerve
+            const bars = data.bars || {};
+            document.getElementById('energyNerve').innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-bolt"></i> Energy:</span>
+                    <span class="stat-value">${bars.energy?.current || 0}/${bars.energy?.maximum || 100}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bars.energy?.current/bars.energy?.maximum*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-brain"></i> Nerve:</span>
+                    <span class="stat-value">${bars.nerve?.current || 0}/${bars.nerve?.maximum || 25}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bars.nerve?.current/bars.nerve?.maximum*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-heart"></i> Happy:</span>
+                    <span class="stat-value">${bars.happy?.current || 0}/${bars.happy?.maximum || 100}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bars.happy?.current/bars.happy?.maximum*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label"><i class="fas fa-life-ring"></i> Life:</span>
+                    <span class="stat-value">${bars.life?.current || 0}/${bars.life?.maximum || 100}</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(bars.life?.current/bars.life?.maximum*100) || 0}%"></div></div>
+            `;
+
+            // Personal Stats
+            const ps = data.personalstats || {};
+            document.getElementById('personalStats').innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Attacks Won:</span>
+                    <span class="stat-value">${formatNumber(ps.attackswon || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Attacks Lost:</span>
+                    <span class="stat-value bad">${formatNumber(ps.attackslost || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Defends Won:</span>
+                    <span class="stat-value">${formatNumber(ps.defendswon || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Defends Lost:</span>
+                    <span class="stat-value bad">${formatNumber(ps.defendslost || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Best Kill Streak:</span>
+                    <span class="stat-value good">${formatNumber(ps.bestkillstreak || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">People Busted:</span>
+                    <span class="stat-value">${formatNumber(ps.peoplebusted || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">People Hospitalized:</span>
+                    <span class="stat-value">${formatNumber(ps.peoplehospitalized || 0)}</span>
+                </div>
+            `;
+
+            // Financial Stats
+            document.getElementById('financialStats').innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Money On Hand:</span>
+                    <span class="stat-value good">$${formatNumber(ps.moneyonhand || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Net Worth:</span>
+                    <span class="stat-value good">$${formatNumber(data.networth?.total || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Points:</span>
+                    <span class="stat-value">${formatNumber(ps.points || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Items Bought:</span>
+                    <span class="stat-value">${formatNumber(ps.itembought || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Items Sold:</span>
+                    <span class="stat-value">${formatNumber(ps.itemsold || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Auction Sales:</span>
+                    <span class="stat-value">$${formatNumber(ps.auctionsales || 0)}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">City Merchants:</span>
+                    <span class="stat-value">${formatNumber(ps.citymerchants || 0)}</span>
+                </div>
+            `;
+
+            // Daily Progress
+            document.getElementById('dailyProgress').innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Login Streak:</span>
+                    <span class="stat-value">${ps.loginstreak || 0} days</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Daily Mission:</span>
+                    <span class="stat-value">${data.missions?.daily || 0}/5</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width: ${(data.missions?.daily/5*100) || 0}%"></div></div>
+                <div class="stat-row">
+                    <span class="stat-label">Races Won:</span>
+                    <span class="stat-value">${ps.raceswon || 0}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Races Lost:</span>
+                    <span class="stat-value">${ps.raceslost || 0}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Gym Sessions:</span>
+                    <span class="stat-value">${ps.gymsessions || 0}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Crimes Committed:</span>
+                    <span class="stat-value">${ps.crimescommitted || 0}</span>
+                </div>
+            `;
+        }
+
+        // Update Medals Tab
+        function updateMedals() {
+            const medals = playerData.medals || {};
+            let html = '';
+            
+            Object.entries(medals).forEach(([id, medal]) => {
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-medal"></i> ${medal.name || 'Unknown'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Description:</span>
+                            <span class="stat-value">${medal.description || ''}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Rarity:</span>
+                            <span class="stat-value">${medal.circulation || 0} owners</span>
+                        </div>
+                        <div class="badge blue">ID: ${id}</div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No medals found</p></div>';
+            document.getElementById('medalsList').innerHTML = html;
+        }
+
+        // Update Merits Tab
+        function updateMerits() {
+            const merits = playerData.merits || {};
+            let html = '';
+            
+            Object.entries(merits).forEach(([id, merit]) => {
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-star"></i> ${merit.name || 'Unknown'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Description:</span>
+                            <span class="stat-value">${merit.description || ''}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Rarity:</span>
+                            <span class="stat-value">${merit.circulation || 0} owners</span>
+                        </div>
+                        <div class="badge green">ID: ${id}</div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No merits found</p></div>';
+            document.getElementById('meritsList').innerHTML = html;
+        }
+
+        // Update Education Tab
+        function updateEducation() {
+            const education = playerData.education || {};
+            let completed = '';
+            let current = '';
+
+            if (education.education_completed) {
+                education.education_completed.forEach(course => {
+                    completed += `
+                        <div class="badge green">
+                            <i class="fas fa-check"></i> ${course}
+                        </div>
+                    `;
+                });
+            }
+
+            if (education.education_current) {
+                current = `
+                    <div class="badge blue">
+                        <i class="fas fa-spinner fa-spin"></i> Currently: ${education.education_current}
+                    </div>
+                `;
+            }
+
+            document.getElementById('educationList').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-graduation-cap"></i> Completed Education</h3>
+                    <div>${completed || 'No completed courses'}</div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-clock"></i> Current Education</h3>
+                    <div>${current || 'Not studying'}</div>
+                </div>
+            `;
+        }
+
+        // Update Properties Tab
+        function updateProperties() {
+            const properties = playerData.properties || {};
+            let html = '';
+
+            Object.entries(properties).forEach(([id, prop]) => {
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-home"></i> ${prop.name || 'Property'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Type:</span>
+                            <span class="stat-value">${prop.type || 'Unknown'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Staff:</span>
+                            <span class="stat-value">${prop.staff || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Upgrades:</span>
+                            <span class="stat-value">${prop.upgrades || 0}</span>
+                        </div>
+                        <div class="badge blue">ID: ${id}</div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No properties found</p></div>';
+            document.getElementById('propertiesList').innerHTML = html;
+        }
+
+        // Update Company Tab
+        function updateCompany() {
+            const company = playerData.company || {};
+            
+            document.getElementById('companyInfo').innerHTML = `
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-building"></i> Company Details</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Name:</span>
+                            <span class="stat-value">${company.name || 'No company'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Position:</span>
+                            <span class="stat-value">${company.position || 'N/A'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Employees:</span>
+                            <span class="stat-value">${company.employees || 0}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-chart-line"></i> Company Stats</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Daily Profit:</span>
+                            <span class="stat-value good">$${formatNumber(company.daily_profit || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Popularity:</span>
+                            <span class="stat-value">${company.popularity || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Efficiency:</span>
+                            <span class="stat-value">${company.efficiency || 0}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Faction Tab
+        function updateFaction() {
+            const faction = playerData.faction || {};
+            
+            document.getElementById('factionInfo').innerHTML = `
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-users"></i> Faction Details</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Name:</span>
+                            <span class="stat-value">${faction.name || 'No faction'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Position:</span>
+                            <span class="stat-value">${faction.position || 'N/A'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Members:</span>
+                            <span class="stat-value">${faction.members || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Respect:</span>
+                            <span class="stat-value">${formatNumber(faction.respect || 0)}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-trophy"></i> Faction Stats</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Chain:</span>
+                            <span class="stat-value">${faction.chain || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Best Chain:</span>
+                            <span class="stat-value">${faction.best_chain || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Territories:</span>
+                            <span class="stat-value">${faction.territories || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Wars Won:</span>
+                            <span class="stat-value">${faction.wars_won || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Stocks Tab
+        function updateStocks() {
+            const stocks = playerData.stocks || {};
+            let html = '';
+
+            Object.entries(stocks).forEach(([id, stock]) => {
+                const profit = (stock.current_price - stock.bought_price) * stock.shares;
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-chart-line"></i> ${stock.name || 'Stock'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Shares:</span>
+                            <span class="stat-value">${formatNumber(stock.shares || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Bought at:</span>
+                            <span class="stat-value">$${formatNumber(stock.bought_price || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Current:</span>
+                            <span class="stat-value">$${formatNumber(stock.current_price || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Profit/Loss:</span>
+                            <span class="stat-value ${profit >= 0 ? 'good' : 'bad'}">$${formatNumber(profit)}</span>
+                        </div>
+                        <div class="badge blue">ID: ${id}</div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No stocks found</p></div>';
+            document.getElementById('stocksList').innerHTML = html;
+        }
+
+        // Update Crimes Tab
+        function updateCrimes() {
+            const crimes = playerData.crimes || {};
+            let html = '';
+
+            Object.entries(crimes).forEach(([id, crime]) => {
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-mask"></i> ${crime.crime_name || 'Crime'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Participants:</span>
+                            <span class="stat-value">${crime.participants || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Success:</span>
+                            <span class="stat-value ${crime.success ? 'good' : 'bad'}">${crime.success ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Time:</span>
+                            <span class="stat-value">${new Date(crime.time * 1000).toLocaleString()}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Reward:</span>
+                            <span class="stat-value good">$${formatNumber(crime.reward || 0)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No crimes found</p></div>';
+            document.getElementById('crimesList').innerHTML = html;
+        }
+
+        // Update Gym Tab
+        function updateGym() {
+            const gym = playerData.gym || {};
+            
+            document.getElementById('gymStats').innerHTML = `
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-dumbbell"></i> Gym Stats</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Strength Gain:</span>
+                            <span class="stat-value">${formatNumber(gym.strength || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Defense Gain:</span>
+                            <span class="stat-value">${formatNumber(gym.defense || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Speed Gain:</span>
+                            <span class="stat-value">${formatNumber(gym.speed || 0)}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Dexterity Gain:</span>
+                            <span class="stat-value">${formatNumber(gym.dexterity || 0)}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-chart-bar"></i> Gym Progress</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Gain:</span>
+                            <span class="stat-value">${formatNumber((gym.strength||0) + (gym.defense||0) + (gym.speed||0) + (gym.dexterity||0))}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Sessions:</span>
+                            <span class="stat-value">${playerData.personalstats?.gymsessions || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Energy Used:</span>
+                            <span class="stat-value">${playerData.personalstats?.gymenergyused || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Travel Tab
+        function updateTravel() {
+            const travel = playerData.travel || {};
+            
+            document.getElementById('travelInfo').innerHTML = `
+                <div class="grid">
+                    <div class="card">
+                        <h3><i class="fas fa-plane"></i> Travel Status</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Destination:</span>
+                            <span class="stat-value">${travel.destination || 'Not traveling'}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Time Left:</span>
+                            <span class="stat-value">${formatTime(travel.time_left || 0)}</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${(travel.timestamp ? 100 - (travel.time_left/7200*100) : 0)}%"></div></div>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-suitcase"></i> Travel Stats</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Times Traveled:</span>
+                            <span class="stat-value">${playerData.personalstats?.traveltimes || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Items Bought Abroad:</span>
+                            <span class="stat-value">${playerData.personalstats?.itemsboughtabroad || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Argentina:</span>
+                            <span class="stat-value">${playerData.personalstats?.argtravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Mexico:</span>
+                            <span class="stat-value">${playerData.personalstats?.mextravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Dubai:</span>
+                            <span class="stat-value">${playerData.personalstats?.dubtravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Hawaii:</span>
+                            <span class="stat-value">${playerData.personalstats?.hawtravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Japan:</span>
+                            <span class="stat-value">${playerData.personalstats?.japtravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">London:</span>
+                            <span class="stat-value">${playerData.personalstats?.lontravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Switzerland:</span>
+                            <span class="stat-value">${playerData.personalstats?.switravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">South Africa:</span>
+                            <span class="stat-value">${playerData.personalstats?.soutravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Canada:</span>
+                            <span class="stat-value">${playerData.personalstats?.cantravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">China:</span>
+                            <span class="stat-value">${playerData.personalstats?.chitravel || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">UAE:</span>
+                            <span class="stat-value">${playerData.personalstats?.uaetravel || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Honors Tab
+        function updateHonors() {
+            const honors = playerData.honors || {};
+            let html = '';
+
+            Object.entries(honors).forEach(([id, honor]) => {
+                html += `
+                    <div class="card">
+                        <h3><i class="fas fa-trophy"></i> ${honor.name || 'Honor'}</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Description:</span>
+                            <span class="stat-value">${honor.description || ''}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Rarity:</span>
+                            <span class="stat-value">${honor.circulation || 0} owners</span>
+                        </div>
+                        <div class="badge blue">ID: ${id}</div>
+                    </div>
+                `;
+            });
+
+            if (!html) html = '<div class="card"><p>No honors found</p></div>';
+            document.getElementById('honorsList').innerHTML = html;
+        }
+
+        // Find Battle Targets
+        async function findTargets() {
+            const minLevel = document.getElementById('minLevel').value;
+            const maxStats = document.getElementById('maxStats').value;
+            const minRespect = document.getElementById('minRespect').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            setLoading(true);
+
+            try {
+                // First get your own stats for comparison
+                const myStats = playerData.battlestats || {};
+                const myTotal = (myStats.strength || 0) + (myStats.defense || 0) + (myStats.speed || 0) + (myStats.dexterity || 0);
+
+                // This is a mock list - in reality you'd need to search through factions/companies
+                // or use Torn's API endpoints to find actual players
+                const mockTargets = [
+                    { id: 1, name: 'Target1', level: 25, total: 500000, strength: 150000, defense: 150000, speed: 100000, dexterity: 100000, respect: 2.5 },
+                    { id: 2, name: 'Target2', level: 30, total: 750000, strength: 200000, defense: 200000, speed: 175000, dexterity: 175000, respect: 3.2 },
+                    { id: 3, name: 'Target3', level: 22, total: 300000, strength: 80000, defense: 80000, speed: 70000, dexterity: 70000, respect: 1.8 },
+                    { id: 4, name: 'Target4', level: 35, total: 900000, strength: 250000, defense: 250000, speed: 200000, dexterity: 200000, respect: 4.1 },
+                    { id: 5, name: 'Target5', level: 28, total: 400000, strength: 120000, defense: 120000, speed: 80000, dexterity: 80000, respect: 2.1 },
+                ];
+
+                // Filter targets
+                let filtered = mockTargets.filter(t => 
+                    t.level >= minLevel && 
+                    t.total <= maxStats &&
+                    t.respect >= minRespect
+                );
+
+                // Sort targets
+                filtered.sort((a, b) => {
+                    if (sortBy === 'level') return b.level - a.level;
+                    if (sortBy === 'stats') return b.total - a.total;
+                    if (sortBy === 'respect') return b.respect - a.respect;
+                });
+
+                // Display targets
+                let html = '<div class="grid">';
+                filtered.forEach(target => {
+                    const statDiff = ((myTotal - target.total) / target.total * 100).toFixed(1);
+                    html += `
+                        <div class="card">
+                            <h3><i class="fas fa-user"></i> ${target.name}</h3>
+                            <div class="stat-row">
+                                <span class="stat-label">Level:</span>
+                                <span class="stat-value">${target.level}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Total Stats:</span>
+                                <span class="stat-value">${formatNumber(target.total)}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Respect:</span>
+                                <span class="stat-value">${target.respect}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Stat Difference:</span>
+                                <span class="stat-value ${statDiff > 0 ? 'good' : 'bad'}">${statDiff}%</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Strength:</span>
+                                <span class="stat-value">${formatNumber(target.strength)}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Defense:</span>
+                                <span class="stat-value">${formatNumber(target.defense)}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Speed:</span>
+                                <span class="stat-value">${formatNumber(target.speed)}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Dexterity:</span>
+                                <span class="stat-value">${formatNumber(target.dexterity)}</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="attackTarget(${target.id})">
+                                <i class="fas fa-fist-raised"></i> Attack
+                            </button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+
+                if (filtered.length === 0) {
+                    html = '<div class="card"><p>No targets found matching your criteria</p></div>';
+                }
+
+                document.getElementById('targetsList').innerHTML = html;
+
+            } catch (error) {
+                console.error('Error finding targets:', error);
+                document.getElementById('targetsList').innerHTML = '<div class="error">Error finding targets</div>';
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Attack target (placeholder)
+        function attackTarget(targetId) {
+            alert(`Attack functionality for target ${targetId} - This would open the attack page in Torn`);
+            window.open(`https://www.torn.com/loader.php?sid=attack&user2ID=${targetId}`, '_blank');
+        }
+    </script>
 </body>
 </html>
